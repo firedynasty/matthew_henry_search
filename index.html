@@ -35,7 +35,6 @@
       align-items: center;
       position: relative;
       margin-bottom: 16px;
-      padding: 0 180px;
     }
 
     h1 {
@@ -115,9 +114,16 @@
       min-width: 120px;
     }
 
+    .button-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+    }
+
     button[type="submit"] {
-      padding: 12px 24px;
-      font-size: 16px;
+      padding: 10px 20px;
+      font-size: 14px;
       background: #4a9eff;
       color: #fff;
       border: none;
@@ -288,29 +294,21 @@
       color: #4a9eff;
     }
 
-    .header-controls {
-      position: absolute;
-      right: 0;
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
     .font-controls {
       display: flex;
       gap: 4px;
     }
 
     .font-btn {
-      width: 28px;
-      height: 28px;
+      width: 32px;
+      height: 32px;
       padding: 0;
-      font-size: 16px;
+      font-size: 18px;
       font-weight: bold;
       background: #e0e0e0;
       color: #333;
       border: 1px solid #ccc;
-      border-radius: 4px;
+      border-radius: 6px;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -335,13 +333,7 @@
 <body>
   <div class="header-row">
     <h1>Matthew Henry Commentary</h1>
-    <div class="header-controls">
-      <div class="font-controls">
-        <button class="font-btn" onclick="changeFontSize(-1)">-</button>
-        <button class="font-btn" onclick="changeFontSize(1)">+</button>
-      </div>
-      <button class="theme-toggle" onclick="toggleTheme()">Dark Mode</button>
-    </div>
+    <button class="theme-toggle" onclick="toggleTheme()">Dark Mode</button>
   </div>
 
   <form class="search-form" onsubmit="doSearch(event)">
@@ -421,7 +413,13 @@
         </optgroup>
       </select>
     </div>
-    <button type="submit" id="searchBtn">Search</button>
+    <div class="button-row">
+      <button type="submit" id="searchBtn">Search</button>
+      <div class="font-controls">
+        <button type="button" class="font-btn" onclick="changeFontSize(-1)">-</button>
+        <button type="button" class="font-btn" onclick="changeFontSize(1)">+</button>
+      </div>
+    </div>
   </form>
 
   <div id="output">
