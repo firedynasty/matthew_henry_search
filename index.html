@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matthew Henry Commentary Search</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #1a1a2e;
+      color: #eee;
+      margin: 0;
+      padding: 16px;
+      min-height: 100vh;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      margin: 0 0 16px 0;
+      color: #fff;
+      text-align: center;
+    }
+
+    .search-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 600px;
+      margin: 0 auto 24px auto;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    input[type="text"], select {
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #444;
+      border-radius: 8px;
+      background: #16213e;
+      color: #fff;
+    }
+
+    input[type="text"] {
+      flex: 1;
+    }
+
+    input[type="text"]:focus, select:focus {
+      outline: none;
+      border-color: #4a9eff;
+    }
+
+    select {
+      min-width: 120px;
+    }
+
+    button {
+      padding: 12px 24px;
+      font-size: 16px;
+      background: #4a9eff;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    button:hover {
+      background: #3a8eef;
+    }
+
+    button:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+
+    .stats {
+      text-align: center;
+      color: #888;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+
+    .results {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .result-item {
+      background: #16213e;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .result-title {
+      font-weight: 600;
+      color: #4a9eff;
+      font-size: 14px;
+    }
+
+    .result-book {
+      background: #0f3460;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #aaa;
+    }
+
+    .result-count {
+      color: #888;
+      font-size: 12px;
+    }
+
+    .context {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #ccc;
+      margin: 8px 0;
+      padding: 8px;
+      background: #0f3460;
+      border-radius: 4px;
+      border-left: 3px solid #4a9eff;
+    }
+
+    .highlight {
+      background: #ffd700;
+      color: #000;
+      padding: 1px 2px;
+      border-radius: 2px;
+    }
+
+    .loading {
+      text-align: center;
+      color: #888;
+      padding: 40px;
+    }
+
+    .error {
+      background: #5c1a1a;
+      color: #ff8888;
+      padding: 16px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .no-results {
+      text-align: center;
+      color: #888;
+      padding: 40px;
+    }
+
+    .help {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      color: #888;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .help code {
+      background: #16213e;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #4a9eff;
+    }
+  </style>
+</head>
+<body>
+  <h1>Matthew Henry Commentary</h1>
+
+  <form class="search-form" onsubmit="doSearch(event)">
+    <div class="input-row">
+      <input type="text" id="keyword" placeholder="Search keyword (e.g., love, grace)" autofocus>
+      <select id="book">
+        <option value="">All Books</option>
+        <optgroup label="Old Testament">
+          <option value="genesis">Genesis</option>
+          <option value="exodus">Exodus</option>
+          <option value="leviticus">Leviticus</option>
+          <option value="numbers">Numbers</option>
+          <option value="deuteronomy">Deuteronomy</option>
+          <option value="joshua">Joshua</option>
+          <option value="judges">Judges</option>
+          <option value="ruth">Ruth</option>
+          <option value="1samuel">1 Samuel</option>
+          <option value="2samuel">2 Samuel</option>
+          <option value="1kings">1 Kings</option>
+          <option value="2kings">2 Kings</option>
+          <option value="1chronicles">1 Chronicles</option>
+          <option value="2chronicles">2 Chronicles</option>
+          <option value="ezra">Ezra</option>
+          <option value="nehemiah">Nehemiah</option>
+          <option value="esther">Esther</option>
+          <option value="job">Job</option>
+          <option value="psalms">Psalms</option>
+          <option value="proverbs">Proverbs</option>
+          <option value="ecclesiastes">Ecclesiastes</option>
+          <option value="song">Song of Solomon</option>
+          <option value="isaiah">Isaiah</option>
+          <option value="jeremiah">Jeremiah</option>
+          <option value="lamentations">Lamentations</option>
+          <option value="ezekiel">Ezekiel</option>
+          <option value="daniel">Daniel</option>
+          <option value="hosea">Hosea</option>
+          <option value="joel">Joel</option>
+          <option value="amos">Amos</option>
+          <option value="obadiah">Obadiah</option>
+          <option value="jonah">Jonah</option>
+          <option value="micah">Micah</option>
+          <option value="nahum">Nahum</option>
+          <option value="habakkuk">Habakkuk</option>
+          <option value="zephaniah">Zephaniah</option>
+          <option value="haggai">Haggai</option>
+          <option value="zechariah">Zechariah</option>
+          <option value="malachi">Malachi</option>
+        </optgroup>
+        <optgroup label="New Testament">
+          <option value="matthew">Matthew</option>
+          <option value="mark">Mark</option>
+          <option value="luke">Luke</option>
+          <option value="john">John</option>
+          <option value="acts">Acts</option>
+          <option value="romans">Romans</option>
+          <option value="1corinthians">1 Corinthians</option>
+          <option value="2corinthians">2 Corinthians</option>
+          <option value="galatians">Galatians</option>
+          <option value="ephesians">Ephesians</option>
+          <option value="philippians">Philippians</option>
+          <option value="colossians">Colossians</option>
+          <option value="1thessalonians">1 Thessalonians</option>
+          <option value="2thessalonians">2 Thessalonians</option>
+          <option value="1timothy">1 Timothy</option>
+          <option value="2timothy">2 Timothy</option>
+          <option value="titus">Titus</option>
+          <option value="philemon">Philemon</option>
+          <option value="hebrews">Hebrews</option>
+          <option value="james">James</option>
+          <option value="1peter">1 Peter</option>
+          <option value="2peter">2 Peter</option>
+          <option value="1john">1 John</option>
+          <option value="2john">2 John</option>
+          <option value="3john">3 John</option>
+          <option value="jude">Jude</option>
+          <option value="revelation">Revelation</option>
+        </optgroup>
+      </select>
+    </div>
+    <button type="submit" id="searchBtn">Search</button>
+  </form>
+
+  <div id="output">
+    <div class="help">
+      <p>Search through Matthew Henry's Complete Commentary on the Whole Bible.</p>
+      <p>Examples:</p>
+      <ul>
+        <li><code>love</code> - search all books</li>
+        <li><code>grace</code> + Psalms - search only Psalms</li>
+        <li><code>eternal life</code> + John - search Gospel of John</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = '/.netlify/functions/search';
+
+    function highlightKeyword(text, keyword) {
+      if (!keyword) return text;
+      const regex = new RegExp(`(${keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+      return text.replace(regex, '<span class="highlight">$1</span>');
+    }
+
+    async function doSearch(e) {
+      e.preventDefault();
+
+      const keyword = document.getElementById('keyword').value.trim();
+      const book = document.getElementById('book').value;
+      const output = document.getElementById('output');
+      const btn = document.getElementById('searchBtn');
+
+      if (!keyword) {
+        output.innerHTML = '<div class="error">Please enter a search keyword</div>';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Searching...';
+      output.innerHTML = '<div class="loading">Searching commentary...</div>';
+
+      try {
+        const params = new URLSearchParams({ q: keyword });
+        if (book) params.append('b', book);
+
+        const response = await fetch(`${API_URL}?${params}`);
+        const data = await response.json();
+
+        if (data.error) {
+          output.innerHTML = `<div class="error">${data.error}</div>`;
+          return;
+        }
+
+        if (!data.results || data.results.length === 0) {
+          output.innerHTML = `<div class="no-results">No matches found for "${keyword}"</div>`;
+          return;
+        }
+
+        let html = `<div class="stats">Found ${data.totalMatches} matches in ${data.fileCount} files</div>`;
+        html += '<div class="results">';
+
+        for (const result of data.results) {
+          html += `
+            <div class="result-item">
+              <div class="result-header">
+                <span class="result-title">${result.title}</span>
+                <span class="result-book">${result.book}</span>
+              </div>
+              <div class="result-count">${result.count} matches</div>
+              ${result.contexts.map(ctx =>
+                `<div class="context">${highlightKeyword(ctx, keyword)}</div>`
+              ).join('')}
+            </div>
+          `;
+        }
+
+        html += '</div>';
+        output.innerHTML = html;
+
+      } catch (err) {
+        output.innerHTML = `<div class="error">Error: ${err.message}</div>`;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Search';
+      }
+    }
+
+    // Allow pressing Enter in the keyword field
+    document.getElementById('keyword').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        doSearch(e);
+      }
+    });
+  </script>
+</body>
+</html>
