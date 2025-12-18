@@ -73,50 +73,68 @@
       background: #1f2b4a;
     }
 
-    /* Tabs */
+    /* Tabs - Navigation style */
     .tabs {
       display: flex;
       justify-content: center;
-      gap: 8px;
-      margin-bottom: 20px;
+      gap: 0;
+      margin-bottom: 24px;
+      border-bottom: 2px solid #ddd;
+    }
+
+    .tabs-label {
+      font-size: 12px;
+      color: #888;
+      margin-right: 12px;
+      align-self: center;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    body.dark-mode .tabs-label {
+      color: #666;
+    }
+
+    body.dark-mode .tabs {
+      border-bottom-color: #333;
     }
 
     .tab-btn {
-      padding: 10px 24px;
+      padding: 12px 24px;
       font-size: 14px;
       font-weight: 600;
-      background: #e0e0e0;
-      color: #333;
-      border: 1px solid #ccc;
-      border-radius: 8px;
+      background: transparent;
+      color: #666;
+      border: none;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
       cursor: pointer;
       transition: all 0.2s;
     }
 
     .tab-btn:hover {
-      background: #d0d0d0;
+      color: #333;
+      background: rgba(0,0,0,0.03);
     }
 
     .tab-btn.active {
-      background: #4a9eff;
-      color: #fff;
-      border-color: #4a9eff;
+      color: #4a9eff;
+      border-bottom-color: #4a9eff;
+      background: transparent;
     }
 
     body.dark-mode .tab-btn {
-      background: #16213e;
-      color: #eee;
-      border-color: #444;
+      color: #888;
     }
 
     body.dark-mode .tab-btn:hover {
-      background: #1f2b4a;
+      color: #ccc;
+      background: rgba(255,255,255,0.05);
     }
 
     body.dark-mode .tab-btn.active {
-      background: #4a9eff;
-      color: #fff;
-      border-color: #4a9eff;
+      color: #4a9eff;
+      border-bottom-color: #4a9eff;
     }
 
     .tab-content {
@@ -490,7 +508,8 @@
 
   <!-- Tabs -->
   <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('search')">Search</button>
+    <span class="tabs-label">Mode:</span>
+    <button class="tab-btn active" onclick="switchTab('search')">Keyword Search</button>
     <button class="tab-btn" onclick="switchTab('browse')">Browse References</button>
   </div>
 
