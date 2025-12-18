@@ -275,7 +275,13 @@ def main():
                         help='Output JSON file')
     args = parser.parse_args()
 
-    htm_files = sorted(Path(args.input).glob('MHC*.HTM'))
+    # Books to exclude (Acts 44 through Revelation 66)
+    EXCLUDED_BOOKS = set(str(i).zfill(2) for i in range(44, 67))
+
+    all_htm_files = sorted(Path(args.input).glob('MHC*.HTM'))
+    # Filter out excluded books
+    htm_files = [f for f in all_htm_files if get_book_code(f.name) not in EXCLUDED_BOOKS]
+    print(f"Excluding books 45-66 (Romans-Revelation): {len(all_htm_files) - len(htm_files)} files removed")
 
     documents = []
     total_refs = 0
