@@ -175,6 +175,37 @@ function search(keyword, bookFilter, maxResults = 50) {
   return results;
 }
 
+function getReferences(bookFilter, chapter) {
+  const data = loadData();
+  const bookCode = getBookCode(bookFilter);
+
+  if (!bookCode) {
+    return { error: 'Invalid book' };
+  }
+
+  // Find the document for this book/chapter
+  const doc = data.documents.find(d =>
+    d.book_code === bookCode && d.chapter === parseInt(chapter)
+  );
+
+  if (!doc) {
+    return { error: 'Chapter not found' };
+  }
+
+  return {
+    id: doc.id,
+    title: doc.title,
+    book: doc.book,
+    chapter: doc.chapter,
+    references: doc.references || []
+  };
+}
+
+function getBookStructure() {
+  const data = loadData();
+  return data.bookStructure || {};
+}
+
 exports.handler = async (event, context) => {
   const headers = {
     'Access-Control-Allow-Origin': '*',
@@ -189,6 +220,48 @@ exports.handler = async (event, context) => {
 
   try {
     const params = event.queryStringParameters || {};
+    const action = params.action || 'search';
+
+    // Get book structure (for browse mode)
+    if (action === 'structure') {
+      const structure = getBookStructure();
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ bookStructure: structure })
+      };
+    }
+
+    // Get references for a specific book/chapter
+    if (action === 'references') {
+      const book = params.b || params.book || '';
+      const chapter = params.c || params.chapter || '';
+
+      if (!book || !chapter) {
+        return {
+          statusCode: 400,
+          headers,
+          body: JSON.stringify({ error: 'Book and chapter required' })
+        };
+      }
+
+      const result = getReferences(book, chapter);
+      if (result.error) {
+        return {
+          statusCode: 404,
+          headers,
+          body: JSON.stringify(result)
+        };
+      }
+
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify(result)
+      };
+    }
+
+    // Default: keyword search
     const keyword = params.q || params.keyword || '';
     const book = params.b || params.book || '';
     const maxResults = parseInt(params.max) || 50;

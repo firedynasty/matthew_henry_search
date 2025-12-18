@@ -73,6 +73,60 @@
       background: #1f2b4a;
     }
 
+    /* Tabs */
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      padding: 10px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      background: #e0e0e0;
+      color: #333;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn:hover {
+      background: #d0d0d0;
+    }
+
+    .tab-btn.active {
+      background: #4a9eff;
+      color: #fff;
+      border-color: #4a9eff;
+    }
+
+    body.dark-mode .tab-btn {
+      background: #16213e;
+      color: #eee;
+      border-color: #444;
+    }
+
+    body.dark-mode .tab-btn:hover {
+      background: #1f2b4a;
+    }
+
+    body.dark-mode .tab-btn.active {
+      background: #4a9eff;
+      color: #fff;
+      border-color: #4a9eff;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
     .search-form {
       display: flex;
       flex-direction: column;
@@ -328,6 +382,99 @@
     body.dark-mode .font-btn:hover {
       background: #1f2b4a;
     }
+
+    /* Browse form */
+    .browse-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 600px;
+      margin: 0 auto 24px auto;
+    }
+
+    .browse-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .browse-row select {
+      flex: 1;
+      min-width: 150px;
+    }
+
+    /* Reference item */
+    .ref-item {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+    }
+
+    body.dark-mode .ref-item {
+      background: #16213e;
+      border-color: transparent;
+    }
+
+    .ref-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .ref-passage {
+      font-weight: 600;
+      color: #2070c0;
+      font-size: 14px;
+    }
+
+    body.dark-mode .ref-passage {
+      color: #4a9eff;
+    }
+
+    .ref-display {
+      font-size: 12px;
+      color: #888;
+    }
+
+    .ref-context {
+      font-size: inherit;
+      line-height: 1.6;
+      color: #444;
+      padding: 8px;
+      background: #f0f4f8;
+      border-radius: 4px;
+      border-left: 3px solid #4a9eff;
+    }
+
+    body.dark-mode .ref-context {
+      color: #ccc;
+      background: #0f3460;
+    }
+
+    .passage-title {
+      text-align: center;
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+      color: #666;
+    }
+
+    body.dark-mode .passage-title {
+      color: #aaa;
+    }
+
+    .ref-count {
+      text-align: center;
+      color: #666;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+
+    body.dark-mode .ref-count {
+      color: #888;
+    }
   </style>
 </head>
 <body>
@@ -336,10 +483,18 @@
     <button class="theme-toggle" onclick="toggleTheme()">Dark Mode</button>
   </div>
 
-  <form class="search-form" onsubmit="doSearch(event)">
-    <div class="input-row">
-      <input type="text" id="keyword" placeholder="Search keyword (e.g., love, grace)" autofocus>
-      <select id="book">
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('search')">Search</button>
+    <button class="tab-btn" onclick="switchTab('browse')">Browse References</button>
+  </div>
+
+  <!-- Search Tab -->
+  <div id="search-tab" class="tab-content active">
+    <form class="search-form" onsubmit="doSearch(event)">
+      <div class="input-row">
+        <input type="text" id="keyword" placeholder="Search keyword (e.g., love, grace)" autofocus>
+        <select id="book">
         <option value="">All Books</option>
         <optgroup label="Old Testament">
           <option value="genesis">Genesis</option>
@@ -422,20 +577,175 @@
     </div>
   </form>
 
-  <div id="output">
-    <div class="help">
-      <p>Search through Matthew Henry's Complete Commentary on the Whole Bible.</p>
-      <p>Examples:</p>
-      <ul>
-        <li><code>love</code> - search all books</li>
-        <li><code>grace</code> + Psalms - search only Psalms</li>
-        <li><code>eternal life</code> + John - search Gospel of John</li>
-      </ul>
+    <div id="output">
+      <div class="help">
+        <p>Search through Matthew Henry's Complete Commentary on the Whole Bible.</p>
+        <p>Examples:</p>
+        <ul>
+          <li><code>love</code> - search all books</li>
+          <li><code>grace</code> + Psalms - search only Psalms</li>
+          <li><code>eternal life</code> + John - search Gospel of John</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Browse References Tab -->
+  <div id="browse-tab" class="tab-content">
+    <div class="browse-form">
+      <div class="browse-row">
+        <select id="browse-book" onchange="onBookChange()">
+          <option value="">Select Book</option>
+        </select>
+        <select id="browse-chapter" onchange="loadReferences()">
+          <option value="">Select Chapter</option>
+        </select>
+      </div>
+      <div class="button-row">
+        <div class="font-controls">
+          <button type="button" class="font-btn" onclick="changeFontSize(-1)">-</button>
+          <button type="button" class="font-btn" onclick="changeFontSize(1)">+</button>
+        </div>
+      </div>
+    </div>
+    <div id="browse-output">
+      <div class="help">
+        <p>Browse cross-references cited by Matthew Henry in his commentary.</p>
+        <p>Select a book and chapter to see all Bible passages referenced in that section.</p>
+      </div>
     </div>
   </div>
 
   <script>
     const API_URL = '/.netlify/functions/search';
+    let bookStructure = null;
+
+    // Tab switching
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+      document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
+      document.getElementById(`${tabName}-tab`).classList.add('active');
+
+      // Load book structure if switching to browse and not loaded yet
+      if (tabName === 'browse' && !bookStructure) {
+        loadBookStructure();
+      }
+    }
+
+    // Load book structure for browse dropdowns
+    async function loadBookStructure() {
+      try {
+        const response = await fetch(`${API_URL}?action=structure`);
+        const data = await response.json();
+        bookStructure = data.bookStructure;
+        populateBookDropdown();
+      } catch (err) {
+        console.error('Failed to load book structure:', err);
+      }
+    }
+
+    function populateBookDropdown() {
+      const select = document.getElementById('browse-book');
+      select.innerHTML = '<option value="">Select Book</option>';
+
+      // Sort by book code to maintain Bible order
+      const sortedCodes = Object.keys(bookStructure).sort((a, b) => parseInt(a) - parseInt(b));
+
+      let currentTestament = null;
+      for (const code of sortedCodes) {
+        const book = bookStructure[code];
+        if (code === '00') continue; // Skip preface
+
+        // Add testament headers
+        const codeNum = parseInt(code);
+        if (codeNum >= 1 && codeNum <= 39 && currentTestament !== 'OT') {
+          const optgroup = document.createElement('optgroup');
+          optgroup.label = 'Old Testament';
+          select.appendChild(optgroup);
+          currentTestament = 'OT';
+        } else if (codeNum >= 40 && currentTestament !== 'NT') {
+          const optgroup = document.createElement('optgroup');
+          optgroup.label = 'New Testament';
+          select.appendChild(optgroup);
+          currentTestament = 'NT';
+        }
+
+        const option = document.createElement('option');
+        option.value = code;
+        option.textContent = `${book.name} (${book.chapters.length} ch)`;
+        select.lastElementChild.appendChild(option);
+      }
+    }
+
+    function onBookChange() {
+      const bookCode = document.getElementById('browse-book').value;
+      const chapterSelect = document.getElementById('browse-chapter');
+      chapterSelect.innerHTML = '<option value="">Select Chapter</option>';
+
+      if (!bookCode || !bookStructure[bookCode]) {
+        document.getElementById('browse-output').innerHTML = '';
+        return;
+      }
+
+      const chapters = bookStructure[bookCode].chapters;
+      for (const ch of chapters) {
+        const option = document.createElement('option');
+        option.value = ch;
+        option.textContent = `Chapter ${ch}`;
+        chapterSelect.appendChild(option);
+      }
+    }
+
+    async function loadReferences() {
+      const bookCode = document.getElementById('browse-book').value;
+      const chapter = document.getElementById('browse-chapter').value;
+      const output = document.getElementById('browse-output');
+
+      if (!bookCode || !chapter) {
+        return;
+      }
+
+      output.innerHTML = '<div class="loading">Loading references...</div>';
+
+      try {
+        const response = await fetch(`${API_URL}?action=references&b=${bookCode}&c=${chapter}`);
+        const data = await response.json();
+
+        if (data.error) {
+          output.innerHTML = `<div class="error">${data.error}</div>`;
+          return;
+        }
+
+        if (!data.references || data.references.length === 0) {
+          output.innerHTML = '<div class="no-results">No cross-references found in this chapter.</div>';
+          return;
+        }
+
+        let html = `<div class="passage-title">${data.title}</div>`;
+        html += `<div class="ref-count">${data.references.length} cross-references</div>`;
+        html += '<div class="results">';
+
+        for (const ref of data.references) {
+          html += `
+            <div class="ref-item">
+              <div class="ref-header">
+                <span class="ref-passage">${ref.ref.display}</span>
+                <span class="ref-display">${ref.display}</span>
+              </div>
+              <div class="ref-context">${ref.context}</div>
+            </div>
+          `;
+        }
+
+        html += '</div>';
+        output.innerHTML = html;
+
+      } catch (err) {
+        output.innerHTML = `<div class="error">Error: ${err.message}</div>`;
+      }
+    }
 
     function toggleTheme() {
       const body = document.body;
@@ -460,8 +770,8 @@
     }
 
     function applyFontSize() {
-      const output = document.getElementById('output');
-      output.style.fontSize = currentFontSize + 'px';
+      document.getElementById('output').style.fontSize = currentFontSize + 'px';
+      document.getElementById('browse-output').style.fontSize = currentFontSize + 'px';
     }
 
     // Load saved preferences
