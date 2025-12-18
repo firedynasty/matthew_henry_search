@@ -1,0 +1,44 @@
+URL Parameters for Bible Navigation
+====================================
+
+The bibleSearchable.html file supports URL parameters to navigate directly to a specific book, chapter, and verse.
+
+Format
+------
+?bookname&chapter:verse
+
+Examples
+--------
+?psalms&6          -> Psalm chapter 6
+?psalms&6:1        -> Psalm 6:1
+?psalms&6:1-5      -> Psalm 6:1 (scrolls to verse 1)
+?genesis&1         -> Genesis chapter 1
+?genesis&1:1       -> Genesis 1:1
+?1corinthians&13   -> 1 Corinthians chapter 13
+?1corinthians&13:4 -> 1 Corinthians 13:4
+?revelation&21:4   -> Revelation 21:4
+
+Full URL Example (CodePen)
+--------------------------
+https://cdpn.io/pen/debug/KwVxmKR?psalms&6:1
+
+How It Works
+------------
+1. The first parameter key is the book name (lowercase, no spaces)
+   - "psalms", "genesis", "revelation"
+   - For numbered books: "1corinthians", "2kings", "1john"
+
+2. The second parameter key is the chapter, optionally with verse
+   - "6" = chapter 6
+   - "6:1" = chapter 6, verse 1
+   - "6:1-5" = chapter 6, verse 1 (navigates to start of range)
+
+3. If no chapter is provided, defaults to chapter 1
+4. If no verse is provided, scrolls to top of chapter
+
+Technical Notes
+---------------
+- Uses URLSearchParams to parse the query string
+- Book names are looked up in bibleBookLookup object
+- Navigation happens after Bible data is loaded via navigateFromUrlParam()
+- The goToReference() function handles the actual navigation and scrolling

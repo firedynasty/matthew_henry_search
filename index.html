@@ -428,6 +428,11 @@
       font-weight: 600;
       color: #2070c0;
       font-size: 14px;
+      text-decoration: none;
+    }
+
+    .ref-passage:hover {
+      text-decoration: underline;
     }
 
     body.dark-mode .ref-passage {
@@ -618,6 +623,7 @@
 
   <script>
     const API_URL = '/.netlify/functions/search';
+    const BIBLE_APP_URL = 'https://cdpn.io/pen/debug/KwVxmKR';
     let bookStructure = null;
 
     // Tab switching
@@ -698,6 +704,23 @@
       }
     }
 
+    // Convert book name to URL-friendly format for CodePen Bible app
+    function bookToUrlParam(bookName) {
+      return bookName.toLowerCase().replace(/\s+/g, '');
+    }
+
+    // Generate CodePen Bible URL from reference
+    function getBibleUrl(ref) {
+      const book = bookToUrlParam(ref.book);
+      const chapter = ref.chapter;
+      const verses = ref.verses;
+
+      if (verses) {
+        return `${BIBLE_APP_URL}?${book}&${chapter}:${verses}`;
+      }
+      return `${BIBLE_APP_URL}?${book}&${chapter}`;
+    }
+
     async function loadReferences() {
       const bookCode = document.getElementById('browse-book').value;
       const chapter = document.getElementById('browse-chapter').value;
@@ -728,10 +751,11 @@
         html += '<div class="results">';
 
         for (const ref of data.references) {
+          const bibleUrl = getBibleUrl(ref.ref);
           html += `
             <div class="ref-item">
               <div class="ref-header">
-                <span class="ref-passage">${ref.ref.display}</span>
+                <a href="${bibleUrl}" class="ref-passage" target="_blank">${ref.ref.display}</a>
                 <span class="ref-display">${ref.display}</span>
               </div>
               <div class="ref-context">${ref.context}</div>
@@ -784,8 +808,6 @@
       // Apply saved font size
       applyFontSize();
     })();
-
-    const BIBLE_APP_URL = 'https://cdpn.io/pen/debug/KwVxmKR';
 
     // Map display book names to URL parameter format (lowercase, no spaces)
     const bookToParam = {
